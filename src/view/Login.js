@@ -21,7 +21,7 @@ const Login = () => {
     <div className="container">
       <div className="row justify-content-center">
         <div className="col-md-6">
-          <h2 className="mt-5 mb-3">Welcome To</h2>
+          <h2 className="mt-5 mb-3">Welcome To HoPak</h2>
           <input
             type="email"
             className="form-control mb-2"
