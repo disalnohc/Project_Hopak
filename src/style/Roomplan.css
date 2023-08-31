@@ -1,0 +1,61 @@
+  
+  .app {
+    margin-top: 10%; 
+  
+  }
+  .search {
+    margin-bottom: 20px;
+  }
+  
+  .search-input {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    width: 60%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .room-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  
+  .room-box {
+    flex: 1 1 calc(33.33% - 1rem); 
+    margin: 0.5rem; 
+    padding: 50px;
+    border: 1px solid #ddd;
+    border-radius: 15px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+  }
+  
+  .room-box h3 {
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .status {
+    font-size: 14px;
+    color: #666;
+  }
+  
+  .room-box.occupied {
+    background-color: #ff8080;
+    text-decoration: none;
+  }
+  
+  .room-box.available {
+    background-color: #80ff80;
+    text-decoration: none;
+  }
+  
+  .room-box.cleaning {
+    background-color: #80bfff;
+    text-decoration: none;
+  }
+  

@@ -1,0 +1,58 @@
+.table {
+    margin-top: 20px;
+    margin-left: 20%;
+    margin-right: auto;
+    border-collapse: collapse;
+    width: 95%; 
+    max-width: 1200px; 
+    font-family: Arial, sans-serif;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .table th,
+  .table td {
+    border: 1px solid #e5e5e5;
+    padding: 12px;
+    text-align: left;
+    color: #FE922E; 
+  }
+  
+  .table th {
+    background-color: #FE922E; 
+    color: white;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+  
+  .table tr:hover {
+    background-color: #f2f2f2;
+    transition: background-color 0.3s ease-in-out;
+  }
+  
+  .search {
+    margin-top: 10px;
+    text-align: center;
+  }
+  
+  .search input {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    width: 60%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .electricity-heading {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    margin-top: 10%;
+    margin-left: 20%;
+  }
+  
+  .electricity-title {
+    font-size: 24px;
+  }
+  
