@@ -5,12 +5,13 @@ import Button from 'react-bootstrap/Button';
 import { firestore } from '../firebase';
 import { storageRef } from '../firebase';
 
-const NewsCard = ({ title, text, id, date, fetchNewsData }) => {
-  const FirebaseProjectId = 'hopak-8af20';
+const NewsCard = ({ title, text, date, id, fetchNewsData }) => {
   const docId = id;
-  const imageUrl = `https://firebasestorage.googleapis.com/v0/b/${FirebaseProjectId}.appspot.com/o/news_image%2F${docId}.png?alt=media`;
   const docRef = firestore.collection('Apartment').doc('News').collection('NewsData').doc(docId); // document Referent
   /*console.log(title,text,docId,date)*/
+
+  const FirebaseProjectId = 'hopak-8af20';
+  const imageUrl = `https://firebasestorage.googleapis.com/v0/b/${FirebaseProjectId}.appspot.com/o/news_image%2F${id}.png?alt=media`;
 
   const [showModalDelete, setShowModalDelete] = useState(false);
   const [showModalEdit, setShowModalEdit] = useState(false);
@@ -23,7 +24,7 @@ const NewsCard = ({ title, text, id, date, fetchNewsData }) => {
     try {
       const imageRef = storageRef.refFromURL(`gs://hopak-8af20.appspot.com/news_image/${id}.png`);
       if (imageRef.delete() && docRef.delete()) {
-        console.log(`ลบข้อมูล${docId}.png`)
+        //console.log(`ลบข้อมูล${docId}.png`)
         alert('ลบเรียบร้อย');
         handleModalClose();
         fetchNewsData();
@@ -44,7 +45,7 @@ const NewsCard = ({ title, text, id, date, fetchNewsData }) => {
       date: updateDate
     }
     try {
-      const imageRef = firebaseStorage.child(`news_image/${docId}.png`);
+      const imageRef = firebaseStorage.child(`news_image/${docId}.png`); //เขียนแยกสำหรับ มีรูปไม่มีรูป
       const response = await fetch(images);
       const blob = await response.blob();
 

@@ -22,7 +22,7 @@ const News = () => {
         setFile(URL.createObjectURL(event.target.files[0]));
     };
 
-    const handleSaveModel = async () => {
+    const handleSaveModel = async () => { //บัคอัพโหลดรูปแล้วไม่สามารถ รับรูปจากลิงค์รูปได้ แต่ลิงค์รูปสามารถแสดงภาพได้
         const NewsCardData = {
             title: document.querySelector("#NewsTitle").value,
             text: document.querySelector("#NewsText").value,
@@ -38,11 +38,14 @@ const News = () => {
                 const blob = await response.blob();
                 await imageRef.put(blob);
 
+                const urldow = await imageRef.getDownloadURL();
+                console.log(urldow);
             }
                 console.log(`เพิ่มข้อมูล${docId}.png`)
                 alert('เพิ่มสำเร็จ');
                 handleCloseModal();
                 fetchNewsData();
+
         } catch (error) {
             console.error('Error to add:', error);
         }
