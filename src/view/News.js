@@ -42,7 +42,6 @@ const News = () => {
                 console.log(`เพิ่มข้อมูล${docId}.png`)
                 alert('เพิ่มสำเร็จ');
                 handleCloseModal();
-                fetchNewsData();
         } catch (error) {
             console.error('Error to add:', error);
         }
