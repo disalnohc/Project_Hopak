@@ -49,7 +49,7 @@ const NewsCard = ({ title, text, id, date, fetchNewsData }) => {
       const blob = await response.blob();
 
 
-      if (docRef.update(UpdateData) && imageRef.put(blob)) {
+      if (docRef.update(UpdateData) || imageRef.put(blob)) {
         alert('อัพเดทข้อมูลเรียบร้อย')
         handleModalClose();
         setImageCard(images);
