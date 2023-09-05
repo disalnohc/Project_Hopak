@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import AdminMenu from './AdminMenu';
 import { Button, Modal } from 'react-bootstrap';
 import '../style/News.css';
-//import logo from '../HoPak.png';
+import logo from '../HoPak.png';
 import NewsCard from '../component/NewsCard';
 import { firestore } from '../firebase';
 import { storageRef } from '../firebase';
@@ -10,11 +10,12 @@ import { storageRef } from '../firebase';
 const News = () => {
     const [show, setShow] = useState(false);
     const [newsData, setNewsData] = useState([]);
-    const [file, setFile] = useState(null);
+    const [file, setFile] = useState(logo);
     const firebaseStorage = storageRef.ref();
 
     const handleShowModal = () => {
         setShow(true);
+        setFile(logo);
     };
 
     const handleChange = (event) => {
@@ -22,7 +23,7 @@ const News = () => {
         setFile(URL.createObjectURL(event.target.files[0]));
     };
 
-    const handleSaveModel = async () => { //บัคอัพโหลดรูปแล้วไม่สามารถ รับรูปจากลิงค์รูปได้ แต่ลิงค์รูปสามารถแสดงภาพได้
+    const handleSaveModel = async () => { 
         const NewsCardData = {
             title: document.querySelector("#NewsTitle").value,
             text: document.querySelector("#NewsText").value,
@@ -32,7 +33,7 @@ const News = () => {
         try {
             const docRef = await firestore.collection('Apartment').doc('News').collection('NewsData').add(NewsCardData);
             const docId = docRef.id;
-            console.log(`เพิ่มข้อมูล${docId}.png`)
+            console.log(`เพิ่มข้อมูล ${docId}.png`)
             if (file) {
                 const imageRef = firebaseStorage.child(`news_image/${docId}.png`);
                 const response = await fetch(file);
@@ -57,6 +58,32 @@ const News = () => {
 
                 } else {
                     console.log('upload fail')
+                }
+            } else {
+                if (!file) {
+                    const imageRef = firebaseStorage.child(`news_image/${docId}.png`);
+                const response = await fetch(logo);
+                const blob = await response.blob();
+                await imageRef.put(blob);
+
+                const urldow = await imageRef.getDownloadURL();
+                if (urldow) {
+                    console.log(`อัพโหลดรูปภาพ ${docId} เรียบร้อย`)
+                    console.log(urldow)
+
+                    firebaseStorage.child(`news_image/${docId}.png`).getDownloadURL()
+                        .then(() => {
+                            console.log(`รูป ${docId}.png อยู่ใน Storage`);
+                        })
+                        .catch(() => {
+                            console.log(`รูป ${docId}.png ไม่อยู่ใน Storage`);
+                        });
+                    alert('เพิ่มสำเร็จ');
+                    handleCloseModal();
+                    fetchNewsData();
+                } else {
+                    console.log('upload fail')
+                }
                 }
             }
         } catch (error) {

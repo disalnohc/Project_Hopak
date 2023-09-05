@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState , useEffect } from 'react';
 import Card from 'react-bootstrap/Card';
 import { Modal } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
@@ -7,30 +7,22 @@ import { storageRef } from '../firebase';
 
 const NewsCard = ({ title, text, date, id, fetchNewsData }) => {
   const docRef = firestore.collection('Apartment').doc('News').collection('NewsData').doc(id); // document Referent
-  /*console.log(title,text,id,date)*/
+
+  const FirebaseProjectId = 'hopak-8af20';
+  const imageUrl = `https://firebasestorage.googleapis.com/v0/b/${FirebaseProjectId}.appspot.com/o/news_image%2F${id}.png?alt=media`;
 
   const [showModalDelete, setShowModalDelete] = useState(false);
   const [showModalEdit, setShowModalEdit] = useState(false);
   const [imageCard, setImageCard] = useState(null); // image in card
-  const [images, setImages] = useState(null); // image edit
+  const [images, setImages] = useState(imageUrl); // image edit
 
   const firebaseStorage = storageRef.ref();
 
-  useEffect(() => {
-    try {
-      firebaseStorage.child(`news_image/${id}.png`).getDownloadURL()
-        .then((url) => {
-          //console.log(`รูป ${id}.png อยู่ใน Storage`);
-          setImageCard(url)
-          setImages(url)
-        })
-        .catch(() => {
-          console.log(`รูป ${id}.png ไม่อยู่ใน Storage`);
-        });
-    } catch (error) {
-      console.log('error check img : ', error)
-    }
-  }, [id, firebaseStorage])
+  const HandleChange = (event) => {
+    const imgInput = URL.createObjectURL(event.target.files[0]);
+    //console.log(imgInput);
+    setImages(imgInput)
+  };
 
   const HandleDelete = () => {
     try {
@@ -58,22 +50,30 @@ const NewsCard = ({ title, text, date, id, fetchNewsData }) => {
     }
 
     try {
-      const imageRef = firebaseStorage.child(`news_image/${id}.png`);
+      if (images) {
+        const imageRef = firebaseStorage.child(`news_image/${id}.png`);
       const response = await fetch(images);
       const blob = await response.blob();
 
       if (imageRef.put(blob) && docRef.update(UpdateData)) {
-            setImageCard(images);
-            setImages(images);
-            alert('อัพเดทข้อมูลเรียบร้อย');
-            handleModalClose();
-            fetchNewsData();
+        setImageCard(images);
+        setImages(imageCard);
+        alert('อัพเดทข้อมูลเรียบร้อย');
+        handleModalClose();
+        fetchNewsData();
+      }
+      } 
+      if (!images) {
+      if (docRef.update(UpdateData)) {
+        alert('อัพเดทข้อมูลเรียบร้อย');
+        handleModalClose();
+        fetchNewsData();
+      }
       }
     } catch (error) {
       console.log('Error update data : ', error);
     }
   };
-
 
   const HandleEditOpen = () => {
     setShowModalEdit(true);
@@ -86,11 +86,27 @@ const NewsCard = ({ title, text, date, id, fetchNewsData }) => {
   const handleModalClose = () => {
     setShowModalEdit(false);
     setShowModalDelete(false);
+    setImages(imageUrl);
   };
 
-  const HandleChange = (event) => {
-    setImages(URL.createObjectURL(event.target.files[0]))
+  const displayImages = () => {
+    try {
+      firebaseStorage.child(`news_image/${id}.png`).getDownloadURL()
+        .then((url) => {
+          //console.log(`รูป ${id}.png อยู่ใน Storage`);
+          setImageCard(url);
+        })
+        .catch(() => {
+          console.log(`รูป ${id}.png ไม่อยู่ใน Storage`);
+        });
+    } catch (error) {
+      console.log('error display img : ', error)
+    }
   };
+
+    useEffect(()=> {
+      displayImages();
+    });
 
   return (
     <>
