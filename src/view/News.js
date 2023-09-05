@@ -32,6 +32,7 @@ const News = () => {
         try {
             const docRef = await firestore.collection('Apartment').doc('News').collection('NewsData').add(NewsCardData);
             const docId = docRef.id;
+            console.log(`เพิ่มข้อมูล${docId}.png`)
             if (file) {
                 const imageRef = firebaseStorage.child(`news_image/${docId}.png`);
                 const response = await fetch(file);
@@ -39,13 +40,25 @@ const News = () => {
                 await imageRef.put(blob);
 
                 const urldow = await imageRef.getDownloadURL();
-                console.log(urldow);
-            }
-                console.log(`เพิ่มข้อมูล${docId}.png`)
-                alert('เพิ่มสำเร็จ');
-                handleCloseModal();
-                fetchNewsData();
+                if (urldow) {
+                    console.log(`อัพโหลดรูปภาพ ${docId} เรียบร้อย`)
+                    console.log(urldow)
 
+                    firebaseStorage.child(`news_image/${docId}.png`).getDownloadURL()
+                        .then(() => {
+                            console.log(`รูป ${docId}.png อยู่ใน Storage`);
+                        })
+                        .catch(() => {
+                            console.log(`รูป ${docId}.png ไม่อยู่ใน Storage`);
+                        });
+                    alert('เพิ่มสำเร็จ');
+                    handleCloseModal();
+                    fetchNewsData();
+
+                } else {
+                    console.log('upload fail')
+                }
+            }
         } catch (error) {
             console.error('Error to add:', error);
         }

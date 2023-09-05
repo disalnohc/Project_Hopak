@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Card from 'react-bootstrap/Card';
 import { Modal } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
@@ -6,25 +6,37 @@ import { firestore } from '../firebase';
 import { storageRef } from '../firebase';
 
 const NewsCard = ({ title, text, date, id, fetchNewsData }) => {
-  const docId = id;
-  const docRef = firestore.collection('Apartment').doc('News').collection('NewsData').doc(docId); // document Referent
-  /*console.log(title,text,docId,date)*/
-
-  const FirebaseProjectId = 'hopak-8af20';
-  const imageUrl = `https://firebasestorage.googleapis.com/v0/b/${FirebaseProjectId}.appspot.com/o/news_image%2F${id}.png?alt=media`;
+  const docRef = firestore.collection('Apartment').doc('News').collection('NewsData').doc(id); // document Referent
+  /*console.log(title,text,id,date)*/
 
   const [showModalDelete, setShowModalDelete] = useState(false);
   const [showModalEdit, setShowModalEdit] = useState(false);
-  const [images , setImages] = useState(imageUrl);
-  const [imageCard , setImageCard] = useState(imageUrl);
+  const [imageCard, setImageCard] = useState(null); // image in card
+  const [images, setImages] = useState(null); // image edit
 
   const firebaseStorage = storageRef.ref();
+
+  useEffect(() => {
+    try {
+      firebaseStorage.child(`news_image/${id}.png`).getDownloadURL()
+        .then((url) => {
+          //console.log(`รูป ${id}.png อยู่ใน Storage`);
+          setImageCard(url)
+          setImages(url)
+        })
+        .catch(() => {
+          console.log(`รูป ${id}.png ไม่อยู่ใน Storage`);
+        });
+    } catch (error) {
+      console.log('error check img : ', error)
+    }
+  }, [id, firebaseStorage])
 
   const HandleDelete = () => {
     try {
       const imageRef = storageRef.refFromURL(`gs://hopak-8af20.appspot.com/news_image/${id}.png`);
       if (imageRef.delete() && docRef.delete()) {
-        //console.log(`ลบข้อมูล${docId}.png`)
+        //console.log(`ลบข้อมูล${id}.png`)
         alert('ลบเรียบร้อย');
         handleModalClose();
         fetchNewsData();
@@ -44,22 +56,24 @@ const NewsCard = ({ title, text, date, id, fetchNewsData }) => {
       text: updateText,
       date: updateDate
     }
+
     try {
-      const imageRef = firebaseStorage.child(`news_image/${docId}.png`); //เขียนแยกสำหรับ มีรูปไม่มีรูป
+      const imageRef = firebaseStorage.child(`news_image/${id}.png`);
       const response = await fetch(images);
       const blob = await response.blob();
 
-
-      if (docRef.update(UpdateData) || imageRef.put(blob)) {
-        alert('อัพเดทข้อมูลเรียบร้อย')
-        handleModalClose();
-        setImageCard(images);
-        fetchNewsData();
+      if (imageRef.put(blob) && docRef.update(UpdateData)) {
+            setImageCard(images);
+            setImages(images);
+            alert('อัพเดทข้อมูลเรียบร้อย');
+            handleModalClose();
+            fetchNewsData();
       }
     } catch (error) {
       console.log('Error update data : ', error);
     }
   };
+
 
   const HandleEditOpen = () => {
     setShowModalEdit(true);
